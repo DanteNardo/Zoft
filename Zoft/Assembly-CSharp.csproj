@@ -51,9 +51,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Drag.cs" />
      <Compile Include="Assets\Scripts\DrawPolygon.cs" />
-     <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
+     <Compile Include="Assets\Scripts\Force.cs" />
+     <Compile Include="Assets\Scripts\Gravity.cs" />
+     <Compile Include="Assets\Scripts\PhysicsObject.cs" />
      <Compile Include="Assets\Scripts\Polygon.cs" />
+     <Compile Include="Assets\Scripts\Spring.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>C:/Users/dante/Source/Zoft/Zoft/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
  </Reference>
