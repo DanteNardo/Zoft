@@ -17,7 +17,7 @@ public abstract class Force : MonoBehaviour {
 	#endregion
 
 	#region Methods
-    protected void Update() {
+    protected void FixedUpdate() {
         ApplyForce();
     }
 

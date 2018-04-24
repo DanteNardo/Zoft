@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1607a6827bb238544b16c01daa4f2643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  count: 2
+  count: 4
   size: {x: 1, y: 1}
   point: {fileID: 1634791619693008, guid: f243a1a5cf4417f4b8d82db8bcfe7ef8, type: 2}
   vertices: []

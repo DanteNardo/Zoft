@@ -10,7 +10,7 @@ public class PhysicsObject : MonoBehaviour {
     #region Properties
     public float InvertMass { get; private set; }
     public Vector3 Position { get; protected set; }
-    public Vector3 Velocity { get; protected set; }
+    public Vector3 Velocity { get; set; }
     public Vector3 Acceleration { get; protected set; }
 	#endregion
 
