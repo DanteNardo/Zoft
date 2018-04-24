@@ -9,7 +9,7 @@ public class Gravity : Force {
     }
 
 	public override void ApplyForce() {
-        physicsObject.AddForce(physicsObject.Mass * acceleration);
+        physicsObject.AddForce(physicsObject.mass * acceleration);
     }
 	#endregion
 }

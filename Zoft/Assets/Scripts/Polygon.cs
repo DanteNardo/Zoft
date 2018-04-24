@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Polygon : MonoBehaviour{
+public class Polygon : MonoBehaviour {
 
 	#region Members
-	public int count;
-	public Vector2 size;
-	public GameObject point;
-	public List<GameObject> vertices;
-	private List<PhysicsObject> pointMasses;
-	private List<Spring> springs;
+	public int count;                           // The amount of vertices
+	public Vector2 size;                        // The size of the overall 2D polygon
+	public GameObject point;                    // The prefab for point masses
+	public List<GameObject> vertices;           // The list of point masses
+	private List<PhysicsObject> pointMasses;    // The list of point mass physics components
+	private List<Spring> springs;               // The list of all springs that make up the soft body
 	#endregion
 
 	#region Methods
@@ -17,6 +17,7 @@ public class Polygon : MonoBehaviour{
 		CreatePolygon();
 	}
 
+    // Creates a poygon with "count" amount of vertices and creates springs inbetween
 	private void CreatePolygon() {
 
 		// Create vertices, point masses, and springs
@@ -39,6 +40,7 @@ public class Polygon : MonoBehaviour{
 			vertices.Add(Instantiate(point, position, Quaternion.identity));
 			pointMasses.Add(vertices[i].GetComponent<PhysicsObject>());
 			pointMasses[i].SetPosition(position);
+            CollisionManager.Instance.pointMasses.Add(pointMasses[i]);
 
 			// Add spring if this isn't the first iteration
 			if (i != 0) {
@@ -53,6 +55,7 @@ public class Polygon : MonoBehaviour{
 		AddSpring(pointMasses[pointMasses.Count-1], pointMasses[0]);
 	}
 
+    // Adds a spring between two physics objects
 	private void AddSpring(PhysicsObject a, PhysicsObject b) {
 		
 		// Create a new spring component
