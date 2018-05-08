@@ -9,7 +9,7 @@ public class CollisionManager : MonoBehaviour {
 
     private Vector2 penetration;
 
-    private void Start() {
+    private void Awake() {
 
         // Create a singleton
         if (Instance != null) {
@@ -23,13 +23,12 @@ public class CollisionManager : MonoBehaviour {
     }
 
     // Performs all collision detection
-    private void CollisionDetection() {
+    public void CollisionDetection() {
 
         // See if any point masses are inside of a box
         foreach (var pm in pointMasses) {
             foreach (var box in boxColliders) {
                 if (Inside(pm, box)) {
-                    pm.Velocity = Vector3.zero;
                     CollisionResponse(pm, box);
                 }
             }
@@ -59,68 +58,69 @@ public class CollisionManager : MonoBehaviour {
 
         // Move in opposite direction of movement
         Vector3 dir = -p.Velocity.normalized;
+        float buffer = 0.01f;
 
         // MinX and MinY and MinX is the closer one
-        if (p.Position.x < b.Position.x &&
-            p.Position.y < b.Position.y &&
-            p.Position.x - b.Min.x < p.Position.y - b.Min.y) {
-            float distMod = b.Min.x - p.Position.x;
-            p.SetPosition(p.Position + dir * distMod);
-        }
+        //if (p.Position.x < b.Position.x &&
+        //    p.Position.y < b.Position.y &&
+        //    p.Position.x - b.Min.x < p.Position.y - b.Min.y) {
+        //    float distMod = b.Min.x - p.Position.x;
+        //    p.SetPosition(p.Position + dir * distMod);
+        //}
 
         // MinX and MinY and MinY is the closer one
-        else if (p.Position.x < b.Position.x &&
-                 p.Position.y < b.Position.y &&
+        if (p.Position.x <= b.Position.x &&
+                 p.Position.y <= b.Position.y &&
                  p.Position.x - b.Min.x > p.Position.y - b.Min.y) {
-            float distMod = b.Min.y - p.Position.y;
+            float distMod = b.Min.y - p.Position.y + buffer;
             p.SetPosition(p.Position + dir * distMod);
         }
 
         // MinX and MaxY and MinX is the closer one
-        else if (p.Position.x < b.Position.x &&
-                 p.Position.y >= b.Position.y &&
-                 p.Position.x - b.Min.x < b.Max.y - p.Position.y) {
-            float distMod = b.Min.x - p.Position.x;
-            p.SetPosition(p.Position + dir * distMod);
-        }
+        //else if (p.Position.x < b.Position.x &&
+        //         p.Position.y >= b.Position.y &&
+        //         p.Position.x - b.Min.x < b.Max.y - p.Position.y) {
+        //    float distMod = b.Min.x - p.Position.x;
+        //    p.SetPosition(p.Position + dir * distMod);
+        //}
 
         // MinX and MaxY and MaxY is the closer one
-        else if (p.Position.x < b.Position.x &&
+        else if (p.Position.x <= b.Position.x &&
                  p.Position.y >= b.Position.y &&
                  p.Position.x - b.Min.x > b.Max.y - p.Position.y) {
-            float distMod = b.Max.y - p.Position.y;
+            float distMod = b.Max.y - p.Position.y + buffer;
             p.SetPosition(p.Position + dir * distMod);
         }
 
         // MaxX and MaxY and MaxX is the closer one
-        else if (p.Position.x >= b.Position.x &&
-                 p.Position.y >= b.Position.y &&
-                 b.Max.y - p.Position.x < b.Max.y - p.Position.y) {
-            float distMod = b.Max.x - p.Position.x;
-            p.SetPosition(p.Position + dir * distMod);
-        }
+        //else if (p.Position.x >= b.Position.x &&
+        //         p.Position.y >= b.Position.y &&
+        //         b.Max.y - p.Position.x < b.Max.y - p.Position.y) {
+        //    float distMod = b.Max.x - p.Position.x;
+        //    p.SetPosition(p.Position + dir * distMod);
+        //}
 
         // MaxX and MaxY and MaxY is the closer one
         else if (p.Position.x >= b.Position.x &&
                  p.Position.y >= b.Position.y &&
-                 b.Max.y - p.Position.x > b.Max.y - p.Position.y) {
-            float distMod = b.Max.y - p.Position.y;
+                 b.Max.x - p.Position.x > b.Max.y - p.Position.y) {
+            float distMod = b.Max.y - p.Position.y + buffer;
             p.SetPosition(p.Position + dir * distMod);
         }
 
         // MaxX and MinY and MaxX is the closer one
-        else if (p.Position.x >= b.Position.x &&
-                 p.Position.y < b.Position.y &&
-                 b.Max.y - p.Position.x < p.Position.y - b.Min.y) {
-            float distMod = b.Max.x - p.Position.x;
-            p.SetPosition(p.Position + dir * distMod);
-        }
+        //else if (p.Position.x >= b.Position.x &&
+        //         p.Position.y < b.Position.y &&
+        //         b.Max.x - p.Position.x < p.Position.y - b.Min.y) {
+        //    float distMod = b.Max.x - p.Position.x;
+        //    p.SetPosition(p.Position + dir * distMod);
+        //}
 
         // MaxX and MinY and MinY is the closer one
         else if (p.Position.x >= b.Position.x &&
-                 p.Position.y < b.Position.y &&
-                 b.Max.y - p.Position.x > p.Position.y - b.Min.y) {
-            float distMod = b.Min.y - p.Position.y;
+                 p.Position.y <= b.Position.y &&
+                 b.Max.x - p.Position.x > p.Position.y - b.Min.y) {
+            float distMod = b.Min.y - p.Position.y + buffer;
             p.SetPosition(p.Position + dir * distMod);
         }
     }
@@ -131,13 +131,16 @@ public class CollisionManager : MonoBehaviour {
         // Find the normalized relative velocity
         Vector3 relVel = pm.Velocity;
         Vector3 norm = pm.Position - b.Position;
-        float n_vel = Vector3.Dot(relVel, norm);
+        float nVel = Vector3.Dot(relVel, norm);
+
+        // Set velocity to halt movement
+        pm.Velocity = Vector3.zero;
 
         // Restitution (bouncyness)
-        float e = 0.1f;
+        float e = 0.9f;
 
         // Calculate impulse
-        float j = -(1 + e) * n_vel;
+        float j = -(1 + e) * nVel;
         j /= (pm.mass + b.mass);
         Vector3 impulse = j * norm;
         pm.AddImpulse(impulse);

@@ -9,16 +9,13 @@ public class Spring : Force {
     private float currLength;
     private Vector3 direction;
     public PhysicsObject objectA;
-    public PhysicsObject objectB;^
+    public PhysicsObject objectB;
 	#endregion
 
 	#region Methods
     private void Start() {
         restLength = Vector3.Distance(objectA.Position, objectB.Position);
         currLength = restLength;
-
-        stiffness = 100;
-        damping = 10;
     }
 
     public override void ApplyForce() {

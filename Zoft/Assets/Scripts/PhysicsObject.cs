@@ -2,7 +2,8 @@
 
 public class PhysicsObject : MonoBehaviour {
 
-	#region Members
+    #region Members
+    public Gravity gravity;
 	protected Vector3 force;
     public float mass;
     #endregion
@@ -16,6 +17,7 @@ public class PhysicsObject : MonoBehaviour {
 
 	#region Methods
 	private void Start() {
+        gravity = GetComponent<Gravity>();
         SetPosition(transform.position);
 		ResetForce();
         InvertMass = 1 / mass;
@@ -24,17 +26,19 @@ public class PhysicsObject : MonoBehaviour {
 	private void FixedUpdate() {
         // TODO: Change integration
         // Semi-Implicit Euler Integration
-        Acceleration = force / mass;
+        Acceleration = force * InvertMass;
 		Velocity += Acceleration * Time.fixedDeltaTime;
 		Position += Velocity * Time.fixedDeltaTime;
 		gameObject.transform.position = Position;
 
-		ResetForce();
+        ResetForce();
 	}
 
 	public void SetPosition(Vector3 position) {
 		Position = position;
-	}
+        gameObject.transform.position = Position;
+
+    }
 
 	public void AddForce(Vector3 force) {
 		this.force += force;

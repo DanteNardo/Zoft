@@ -10,6 +10,8 @@ public class Polygon : MonoBehaviour {
 	public List<GameObject> vertices;           // The list of point masses
 	private List<PhysicsObject> pointMasses;    // The list of point mass physics components
 	private List<Spring> springs;               // The list of all springs that make up the soft body
+    public GameObject center;                   // The center point of the shape
+    private PhysicsObject centerPhysics;        // The physics component of the center shape
 	#endregion
 
 	#region Methods
@@ -44,15 +46,33 @@ public class Polygon : MonoBehaviour {
 
 			// Add spring if this isn't the first iteration
 			if (i != 0) {
-				AddSpring(pointMasses[i-1], pointMasses[i]);
+				AddSpring(pointMasses[i - 1], pointMasses[i]);
 			}
 
 			// Iterate angle to create polygon
 			angle += deltaAngle;
-		}
-		
-		// Add the last spring from the last vertice to the first
-		AddSpring(pointMasses[pointMasses.Count-1], pointMasses[0]);
+        }
+
+        // Add the last spring from the last vertice to the first
+        AddSpring(pointMasses[pointMasses.Count - 1], pointMasses[0]);
+
+        // Add a center point if the shape has at least three vertices
+        if (count >= 3) {
+            center = Instantiate(point, Vector3.zero, Quaternion.identity);
+            centerPhysics = center.GetComponent<PhysicsObject>();
+            centerPhysics.SetPosition(Vector3.zero);
+            CollisionManager.Instance.pointMasses.Add(centerPhysics);
+
+            // Have a spring from the center point to each vertice
+            foreach (var point in pointMasses) {
+                AddSpring(point, centerPhysics);
+            }
+        }
+
+        // Connect vertices vertically
+        if (count >= 8) {
+
+        }
 	}
 
     // Adds a spring between two physics objects
@@ -62,8 +82,8 @@ public class Polygon : MonoBehaviour {
 		Spring spring = gameObject.AddComponent<Spring>() as Spring;
 
 		// Set the initial values for the spring
-		spring.stiffness = 8.0f;
-		spring.damping = 0.1f;
+		spring.stiffness = 1000.0f;
+		spring.damping = 0.9f;
 		spring.objectA = a;
 		spring.objectB = b;
 

@@ -32,13 +32,14 @@ public class DrawPolygon : MonoBehaviour {
 
         // Draw lines
         GL.Begin(GL.LINES);
-        GL.Color(Color.red);
+        GL.Color(Color.white);
 
         // To save memory/computation and be readable
         Vector3 pos;
         Vector3 nexPos;
+        Vector3 center = poly.center.transform.position;
 
-		// Draw every point on the polygon
+        // Draw every point on the polygon
         for (int i = 0; i < poly.vertices.Count; ++i)
         {
             // Loops from the end of the array to the start
@@ -47,16 +48,21 @@ public class DrawPolygon : MonoBehaviour {
             // Save current and next position
             pos = poly.vertices[i].transform.position;
             nexPos = poly.vertices[next].transform.position;
+            center = poly.center.transform.position;
 
-            // Create vertex points
+            // Create vertex points for edges
             GL.Vertex3(pos.x, pos.y, pos.z);
             GL.Vertex3(nexPos.x, nexPos.y, nexPos.z);
+
+            // Create vertex points for center->vertices
+            GL.Vertex3(center.x, center.y, center.z);
+            GL.Vertex3(pos.x, pos.y, pos.z);
         }
-		
-		// Final point that wraps around the polygon from finish->start
+
+        // Final point that wraps around the polygon from finish->start
         // GL.Vertex3(poly.points[i].x, poly.points[i].y, poly.points[i].z);
 
-		// Finish drawing polygon and put matrix back on
+        // Finish drawing polygon and put matrix back on
         GL.End();
         GL.PopMatrix();
     }
