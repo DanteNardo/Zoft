@@ -39,24 +39,18 @@ public class DrawPolygon : MonoBehaviour {
         Vector3 nexPos;
         Vector3 center = poly.center.transform.position;
 
-        // Draw every point on the polygon
-        for (int i = 0; i < poly.vertices.Count; ++i)
-        {
+        // Draw every spring on the polygon
+        for (int i = 0; i < poly.GetSprings().Count; i++) { 
             // Loops from the end of the array to the start
-            int next = i+1 == poly.vertices.Count ? 0 : i+1;
+            int next = i+1 == poly.GetSprings().Count ? 0 : i+1;
 
             // Save current and next position
-            pos = poly.vertices[i].transform.position;
-            nexPos = poly.vertices[next].transform.position;
-            center = poly.center.transform.position;
+            pos = poly.GetSprings()[i].objectA.transform.position;
+            nexPos = poly.GetSprings()[i].objectB.transform.position;
 
             // Create vertex points for edges
             GL.Vertex3(pos.x, pos.y, pos.z);
             GL.Vertex3(nexPos.x, nexPos.y, nexPos.z);
-
-            // Create vertex points for center->vertices
-            GL.Vertex3(center.x, center.y, center.z);
-            GL.Vertex3(pos.x, pos.y, pos.z);
         }
 
         // Final point that wraps around the polygon from finish->start
