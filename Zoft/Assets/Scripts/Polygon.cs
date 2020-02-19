@@ -10,7 +10,7 @@ public class Polygon : MonoBehaviour {
 	public float centerStiffness = 2.0f;        // Stiffness is multiplied by this for center springs to make the polygon structurally sound
 	public float centerDamping = 1.05f;         // Damping is multiplied by this for center springs to make the polygon structurally sound
 	public Vector2 size;                        // The size of the overall 2D polygon
-	public GameObject pointPrefab;                    // The prefab for point masses
+	public GameObject pointPrefab;				// The prefab for point masses
 	public List<GameObject> vertices;           // The list of point masses
 	private List<PhysicsObject> pointMasses;    // The list of point mass physics components
 	private List<Spring> springs;               // The list of all springs that make up the soft body
