@@ -1,64 +1,94 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class DrawPolygon : MonoBehaviour {
-
-	#region DrawPolygon Members
-	public Material lineMat;
-	public Polygon poly;
+public class DrawPolygon : MonoBehaviour
+{
+    #region DrawPolygon Members
+    public bool drawPolygon;
+    public Color polygonColor;
+    public Material polygonMaterial;
+    public Polygon polygon;
+    private MeshRenderer meshRenderer;
+    private MeshFilter meshFilter;
+    private Vector3[] vertices3d;
+    private Vector2[] vertices2d;
     #endregion
 
     #region DrawPolygon Methods
-
-    // Get the polygon if it wasn't dragged in the inspector
     private void Start() {
-        if (poly == null) {
-            poly = GetComponent<Polygon>();
-        }
+        // Get components
+        if (!polygon) polygon = GetComponent<Polygon>();
+        if (!meshRenderer) meshRenderer = GetComponent<MeshRenderer>();
+        if (!meshFilter) meshFilter = GetComponent<MeshFilter>();
+
+        // Create the mesh
+        meshFilter.mesh = new Mesh();
+        UpdateColor();
+        UpdateMesh();
     }
 
-	// Will be called after all regular rendering is done
-    public void OnRenderObject()
-    {
-        // Apply the line material
-        lineMat.SetPass(0);
+    private void LateUpdate() {
+        UpdateColor();
+        UpdateMesh();
+        UpdateDrawState();
+    }
 
-		// Safely put away matrix so that we can draw to GL temporarily
-        GL.PushMatrix();
+    private void UpdateMesh() {
+        // Update vertex arrays from polygon
+        vertices3d = GetVertices();
+        vertices2d = ConvertVector3To2(meshFilter.mesh.vertices);
 
-        // Set transformation matrix for drawing to match our transform
-        GL.MultMatrix(transform.localToWorldMatrix);
+        // Update Mesh Vertices
+        meshFilter.mesh.vertices = vertices3d;
 
-        // Draw lines
-        GL.Begin(GL.LINES);
-        GL.Color(Color.white);
+        // Update Mesh Triangles
+        meshFilter.mesh.triangles = new Triangulator(vertices2d).Triangulate();
 
-        // To save memory/computation and be readable
-        Vector3 pos;
-        Vector3 nexPos;
-        Vector3 center = poly.center.transform.position;
+        // Update Mesh Colors
+        meshFilter.mesh.colors = CreateColorArrayFromVertices(vertices2d);
 
-        // Draw every spring on the polygon
-        for (int i = 0; i < poly.GetSprings().Count; i++) { 
-            // Loops from the end of the array to the start
-            int next = i+1 == poly.GetSprings().Count ? 0 : i+1;
+        // Recalculate Mesh normals and bounds
+        meshFilter.mesh.RecalculateNormals();
+        meshFilter.mesh.RecalculateBounds();
 
-            // Save current and next position
-            pos = poly.GetSprings()[i].objectA.transform.position;
-            nexPos = poly.GetSprings()[i].objectB.transform.position;
+        // Recalculate Mesh UV texture coordinates
+        Bounds bounds = meshFilter.mesh.bounds;
+        meshFilter.mesh.uv = vertices2d.Select(v => new Vector2(v.x / bounds.size.x, v.y / bounds.size.y)).ToArray();
+    }
 
-            // Create vertex points for edges
-            GL.Vertex3(pos.x, pos.y, pos.z);
-            GL.Vertex3(nexPos.x, nexPos.y, nexPos.z);
+    private void UpdateColor() { 
+        polygonMaterial.color = polygonColor;
+        meshRenderer.material = polygonMaterial;
+    }
+
+    private Vector3[] GetVertices() {
+        return polygon.vertices.Select(v => new Vector3(
+            v.transform.position.x, 
+            v.transform.position.y))
+            .ToArray();
+    }
+
+    private Vector2[] ConvertVector3To2(Vector3[] array) { 
+        return System.Array.ConvertAll<Vector3, Vector2>(array, v => v);
+    }
+    
+    private Color[] CreateColorArrayFromVertices(Vector2[] vertices) { 
+        Color[] colors = new Color[vertices.Length];
+        for (int i = 0; i < vertices.Length; i++) {
+            colors[i] = polygonColor;
         }
+        return colors;
+    }
 
-        // Final point that wraps around the polygon from finish->start
-        // GL.Vertex3(poly.points[i].x, poly.points[i].y, poly.points[i].z);
-
-        // Finish drawing polygon and put matrix back on
-        GL.End();
-        GL.PopMatrix();
+    private void UpdateDrawState() { 
+        if (drawPolygon == false && meshRenderer.enabled == true) {
+            meshRenderer.enabled = false;
+        }
+        else if (drawPolygon == true && meshRenderer.enabled == false) {
+            meshRenderer.enabled = true;
+        }
     }
     #endregion
 };
