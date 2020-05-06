@@ -8,8 +8,9 @@ public class DrawPolygon : MonoBehaviour
     #region DrawPolygon Members
     public bool drawPolygon;
     public Color polygonColor;
-    public Material polygonMaterial;
     public Polygon polygon;
+    public Material referenceMaterial;
+    private Material polygonMaterial;
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
     private Vector3[] vertices3d;
@@ -22,6 +23,9 @@ public class DrawPolygon : MonoBehaviour
         if (!polygon) polygon = GetComponent<Polygon>();
         if (!meshRenderer) meshRenderer = GetComponent<MeshRenderer>();
         if (!meshFilter) meshFilter = GetComponent<MeshFilter>();
+
+        // Create new material
+        polygonMaterial = new Material(referenceMaterial);
 
         // Create the mesh
         meshFilter.mesh = new Mesh();

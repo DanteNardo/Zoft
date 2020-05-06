@@ -22,6 +22,19 @@ public class CollisionManager : MonoBehaviour {
         CollisionDetection();
     }
 
+    public void Clear() {
+        pointMasses.Clear();
+    }
+
+    public void Remove(Polygon polygon) {
+        foreach (var physicsObject in polygon.GetComponents<PhysicsObject>()) {
+            pointMasses.Remove(physicsObject);
+        }
+        foreach (var physicsObject in polygon.GetComponents<PhysicsObject>()) {
+            pointMasses.Remove(physicsObject);
+        }
+    }
+
     // Performs all collision detection
     public void CollisionDetection() {
 

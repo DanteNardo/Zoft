@@ -115,5 +115,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawPolygon: 1
   polygonColor: {r: 1, g: 0, b: 0, a: 1}
-  polygonMaterial: {fileID: 2100000, guid: b8ce4d8a3acc1fb4790e945dd6e25610, type: 2}
   polygon: {fileID: 577792994085751063}
+  referenceMaterial: {fileID: 2100000, guid: b8ce4d8a3acc1fb4790e945dd6e25610, type: 2}
